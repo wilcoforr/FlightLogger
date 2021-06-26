@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Flight Logger</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Flight Logger">
+    <meta name="author" content="wilcoforr">
+    <meta name="keywords" content="flight,logger,flightlogger,logging,flight log,flightlog">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet"
+        type='text/css'>
+
+
+    <style>
+        body {
+            background-color: #fafaff;
+        }
+
+        .container {
+            max-width: 99.5%;
+        }
+
+        table>thead>tr>th {
+            border-top: none;
+        }
+
+        .container>.row>.col-md-2>.row {
+            margin-top: 10px;
+        }
+
+        #sideBar {
+            border-left: 2px solid gray;
+        }
+    </style>
+</head>
+
+<body>
+    <main role="main" class="container">
+
+        <div class="row">
+            <!-- side bar -->
+            <div class="col-md-2">
+                <div class="row">
+                    <div class="col text-center">
+                        <img src="icon.png" height="40" width="40" />
+                        <h1 class="text-center">Flight Logger</h1>
+                        <h2 class="text-center"><a href="https://www.gitlab.com/wilcoforr">by wilcoforr</a></h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-success col-md-12" data-toggle="modal"
+                            data-target="#flightModal" onclick="setDefaults()">
+                            <i class="fa fa-plane"></i>
+                            Enter New Flight Sortie
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-danger col-md-12" onclick="clearlocalStorage();">
+                            <i class="fa fa-exclamation-circle"></i>
+                            Delete All Data
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-primary col-md-12" onclick="saveData(true)">
+                            <i class="fa fa-save"></i>
+                            Save Data as JSON
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <button type="button" class="btn btn-outline-primary col-md-12" onclick="saveData(false)">
+                            <i class="fa fa-save"></i>
+                            Save Data as CSV
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <a href="https://gitlab.com/wilcoforr/flightlogger/-/raw/master/public/flight-log.xlsx"
+                            class="btn btn-outline-info col-md-12">
+                            <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                            Spreadsheet Alternative
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>Note: This program uses your current <a
+                                href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage">web
+                                browser's <span title="window.localStorage variable">local
+                                    storage (localStorage)</span></a>. Use the same browser to enter flight logs, as
+                            each internet
+                            browser has its own localStorage. If you clear your browser's
+                            cache/local storage/cookies/data for ALL sites, this site will potentially lose its data
+                            too.</p>
+                        <p>Also, do not use Flight Logger if you browse in Private/Incognito mode, as the
+                            localStorage data is lost upon closing the browser.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10" id="sideBar">
+                <div class="row">
+                    <div class="col">
+                        <table id="flightLoggerTable" class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <!-- for some reason trying to set the border-top:none via css in the <style> was not working... thus inlining.-->
+                                    <th style="width:80px;border-top:none;">
+                                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        Date
+                                    </th>
+                                    <!-- <th style="width:100px;border-top:none;">
+                                        <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                        Started</th>
+                                    <th style="width:100px;border-top:none;">
+                                        <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                                        Ended
+                                    </th> -->
+                                    <th style="width:200px;border-top:none;">
+                                        <i class="fa fa-cog" aria-hidden="true"></i>
+                                        Plane/Vehicle
+                                    </th>
+                                    <th style="width:170px;border-top:none;">
+                                        <i class="fa fa-fighter-jet" aria-hidden="true"></i>
+                                        Mission
+                                    </th>
+                                    <th style="width:170px;border-top:none;">
+                                        <i class="fa fa-tasks" aria-hidden="true"></i>
+                                        <span title="Outcome/result of the sortie/mission">Outcome</span>
+                                    </th>
+                                    <th style="width: 90px;border-top:none;">
+                                        <i class="fa fa-bolt" aria-hidden="true"></i>
+                                        Victories
+                                    </th>
+                                    <th style="border-top:none; width:95px;">
+                                        <!-- <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                        Details -->
+                                    </th>
+                                    <th style="width:100px;border-top:none;"></th>
+                                    <th style="width:130px;border-top:none;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="flightLogs">
+                                <!-- flights are added here -->
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="flightModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog  modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">New Flight Sortie</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group row">
+                                <label for="flightDate" class="col-form-label col-sm-3"> <i class="fa fa-calendar"
+                                        aria-hidden="true"></i>
+                                    Date
+                                </label>
+                                <div class="col-sm-9">
+                                    <!-- I did try to attempt using the new type="date" field but was more work than what it is worth. So now it is just a regular string.-->
+                                    <!-- javascript does weird timezone things with new Date() and parsing strings, leading to data errors of off by one day stuff... -->
+                                    <!-- Tried using jQueryUI Datepicker but I don't think it is compatible with Bootstrap 4.-->
+                                    <input class="form-control" id="flightDate" type="text" style="width: 180px;">
+                                </div>
+                            </div>
+                            <!-- could potentially use the time input - but I want 24-hour time, and this is not supported with the current type="time" attribute -->
+                            <!-- the browser will load the time as 12 hour AM/PM format, but save it as 24-hour military time... no way to force the browser -->
+                            <!-- implemented timePicker dialog UI feature to force it to use 24 hour mode -->
+                            <div class="form-group row">
+                                <label for="flightStarted" class="col-form-label col-sm-3">
+                                    <i class="fa fa-paper-plane" aria-hidden="true"></i>
+                                    Started</label>
+                                <div class="col-sm-9 form-inline">
+                                    <!-- <input type="time" class="form-control" id="flightStarted" style="width: 180px;"> -->
+                                    <input type="text" class="form-control" id="flightStartedHour"
+                                        style="width:45px;margin-right: 10px;" maxlength="2"
+                                        title="Hours in 24HR format">
+                                    &colon;
+                                    <input type="text" class="form-control" id="flightStartedMinute"
+                                        style="width:45px;margin-left:10px;" maxlength="2" title="Minutes">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="flightEnded" class="col-form-label col-sm-3">
+                                    <i class="fa fa-paper-plane-o" aria-hidden="true"></i>
+                                    Ended</label>
+                                <div class="col-sm-9 form-inline">
+                                    <!-- <input type="time" class="form-control" id="flightEnded" style="width: 180px;"> -->
+                                    <input type="text" class="form-control" id="flightEndedHour"
+                                        style="width:45px;margin-right:10px;" maxlength="2"
+                                        title="Hours in 24HR format">
+                                    &colon;
+                                    <input type="text" class="form-control" id="flightEndedMinute"
+                                        style="width:45px;margin-left:10px;" maxlength="2" title="Minutes">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="flightPlaneName" class="col-form-label">
+                                    <i class="fa fa-cog" aria-hidden="true"></i>
+                                    Plane or Vehicle Name: <span class="text-muted">(ex: "P-51D", "M1 Abrams", or "F-15E")</span>
+                                </label>
+                                <input type="text" class="form-control" id="flightPlaneName" />
+                            </div>
+                            <div class="form-group">
+                                <label for="flightMission" class="col-form-label">
+                                    <i class="fa fa-fighter-jet" aria-hidden="true"></i>
+                                    Mission/Reason: <span class="text-muted">(ex: "Intercept Bombers", "Dog fight", or "Base
+                                        Defense")</span>
+                                </label>
+                                <input type="text" class="form-control" id="flightMission" />
+                            </div>
+                            <div class="form-group row">
+                                <label for="flightType" class="col-form-label col-sm-7">
+                                    <i class="fa fa-tasks" aria-hidden="true"></i>
+                                    Outcome: Landed, Bailed, or Killed?
+                                </label>
+                                <div class="col-sm-5">
+                                    <select id="flightType" class="form-control">
+                                        <option>Landed</option>
+                                        <option>Bailed</option>
+                                        <option>Killed in Action</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="flightKills" class="col-form-label col-sm-3">
+                                    <i class="fa fa-bolt" aria-hidden="true"></i>
+                                    <span title="Planes or Vehicles Destroyed/Killed">Victories</span>
+                                </label>
+                                <div class="col-sm-9">
+                                    <input type="number" class="form-control" id="flightKills" value="0"
+                                        style="width: 180px;" />
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="flightNotes" class="col-form-label col-sm-3">
+                                    <i class="fa fa-file-text-o" aria-hidden="true"></i>
+                                    Notes
+                                </label>
+                                <div class="col-sm-9">
+                                    <textarea class="form-control" id="flightNotes" rows="3"
+                                        placeholder="Enter notes/remarks about your recent mission."></textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Cancel
+                        </button>
+
+                        <button id="addFlightLog" type="button" class="btn btn-outline-success"
+                            onclick="addFlightLog()">
+                            <i class="fa fa-floppy-o" aria-hidden="true"></i>
+                            Save
+                        </button>
+
+                        <button id="editFlightLog" type="button" class="btn btn-outline-success d-none"
+                            onclick="updateFlightLog()">
+                            <i class="fa fa-save" aria-hidden="true"></i>
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="detailsModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Flight Log Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <dl>
+                            <dt>Date</dt>
+                            <dd id="dateDetails"></dd>
+
+                            <dt>Started</dt>
+                            <dd id="startedDetails"></dd>
+
+                            <dt>Ended</dt>
+                            <dd id="endedDetails"></dd>
+
+                            <dt>Plane/Vehicle</dt>
+                            <dd id="planeDetails"></dd>
+
+                            <dt>Mission</dt>
+                            <dd id="missionDetails"></dd>
+
+                            <dt>Outcome</dt>
+                            <dd id="typeDetails"></dd>
+
+                            <dt>Victories</dt>
+                            <dd id="killsDetails"></dd>
+
+                            <dt>Notes</dt>
+                            <dd id="notesDetails"></dd>
+                        </dl>
+
+                    </div>
+                    <div class="modal-footer">
+                        <p class="text-muted text-center">Created: <span id="flightTimeStampDetails"></span></p>
+                        <button type="button" class="btn btn-outline-primary col-md-4" data-dismiss="modal">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal" id="flightAddedModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body text-center ">
+                        <h3>Flight Log added!</h3>
+                        <p class="text-success">Reloading page</p>
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Loading...</span>
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main><!-- /.container -->
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
