@@ -2,6 +2,8 @@
 
 [Flight Logger](https://wilcoforr.github.io/FlightLogger/)
 
+[!Flight Logger Example Image](flightlogger.PNG)
+
 ## Warning
 
 Broken styles on mobile in portrait mode. Please try it out on landscape mode if you are using a phone/tablet.
