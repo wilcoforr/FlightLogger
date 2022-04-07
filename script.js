@@ -12,11 +12,6 @@
 
     $("#flightModal").modal({ backdrop: 'static', keyboard: false, show: false });
 
-    // TODO- on change, if less than 1, pad it with leading zero
-    $("#flightStartedMinute").on("change", function () {
-        console.log(this.value);
-    });
-
 })();
 
 function getEle(elementID) {
@@ -42,8 +37,7 @@ function addFlightLog() {
     const flightKills = getVal("flightKills");
     const flightMission = getVal("flightMission");
 
-    //format time - if
-    if (flightStartedMinute.length != 2) {
+    if (flightStartedMinute.length == 1) {
         flightStartedMinute = flightStartedMinute.padStart(2, "0");
     }
 
