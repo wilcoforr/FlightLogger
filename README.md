@@ -2,7 +2,7 @@
 
 [Flight Logger](https://wilcoforr.github.io/FlightLogger/)
 
-![Flight Logger Example Image](flightlogger.PNG)
+![Flight Logger Example Image](flightlogger-example.png)
 
 ## Warning
 
